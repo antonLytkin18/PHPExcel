@@ -4144,6 +4144,7 @@ class PHPExcel_Calculation
                             //    Trap for Divide by Zero error
                             $stack->push('Value', '#DIV/0!');
                             $this->_debugLog->writeDebugLog('Evaluation Result is ', $this->showTypeDetails('#DIV/0!'));
+                            throw new PHPExcel_Calculation_ZeroDivideException('#DIV/0!');
                             return false;
                         } else {
                             $result = $operand1 / $operand2;
