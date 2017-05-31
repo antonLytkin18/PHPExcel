@@ -4021,7 +4021,11 @@ class PHPExcel_Calculation
                 if ($useLowercaseFirstComparison) {
                     $result = $this->strcmpLowercaseFirst($operand1, $operand2) > 0;
                 } else {
-                    $result = ($operand1 > $operand2);
+                    try {
+                        $result = $this->checkIntegerAndStringComparison($operand1, $operand2, $operation);
+                    } catch (PHPExcel_Calculation_Exception $e) {
+                        $result = ($operand1 > $operand2);
+                    }
                 }
                 break;
             //    Less than
@@ -4029,7 +4033,11 @@ class PHPExcel_Calculation
                 if ($useLowercaseFirstComparison) {
                     $result = $this->strcmpLowercaseFirst($operand1, $operand2) < 0;
                 } else {
-                    $result = ($operand1 < $operand2);
+                    try {
+                        $result = $this->checkIntegerAndStringComparison($operand1, $operand2, $operation);
+                    } catch (PHPExcel_Calculation_Exception $e) {
+                        $result = ($operand1 < $operand2);
+                    }
                 }
                 break;
             //    Equality
@@ -4047,7 +4055,11 @@ class PHPExcel_Calculation
                 } elseif ($useLowercaseFirstComparison) {
                     $result = $this->strcmpLowercaseFirst($operand1, $operand2) >= 0;
                 } else {
-                    $result = strcmp($operand1, $operand2) >= 0;
+                    try {
+                        $result = $this->checkIntegerAndStringComparison($operand1, $operand2, $operation);
+                    } catch (PHPExcel_Calculation_Exception $e) {
+                        $result = strcmp($operand1, $operand2) >= 0;
+                    }
                 }
                 break;
             //    Less than or equal
@@ -4057,7 +4069,11 @@ class PHPExcel_Calculation
                 } elseif ($useLowercaseFirstComparison) {
                     $result = $this->strcmpLowercaseFirst($operand1, $operand2) <= 0;
                 } else {
-                    $result = strcmp($operand1, $operand2) <= 0;
+                    try {
+                        $result = $this->checkIntegerAndStringComparison($operand1, $operand2, $operation);
+                    } catch (PHPExcel_Calculation_Exception $e) {
+                        $result = strcmp($operand1, $operand2) <= 0;
+                    }
                 }
                 break;
             //    Inequality
@@ -4124,37 +4140,42 @@ class PHPExcel_Calculation
                  (is_string($operand2) && !is_numeric($operand2) && strlen($operand2)>0))) {
                 $result = PHPExcel_Calculation_Functions::VALUE();
             } else {
-                //    If we're dealing with non-matrix operations, execute the necessary operation
-                switch ($operation) {
-                    //    Addition
-                    case '+':
-                        $result = $operand1 + $operand2;
-                        break;
-                    //    Subtraction
-                    case '-':
-                        $result = $operand1 - $operand2;
-                        break;
-                    //    Multiplication
-                    case '*':
-                        $result = $operand1 * $operand2;
-                        break;
-                    //    Division
-                    case '/':
-                        if ($operand2 == 0) {
-                            //    Trap for Divide by Zero error
-                            $stack->push('Value', '#DIV/0!');
-                            $this->_debugLog->writeDebugLog('Evaluation Result is ', $this->showTypeDetails('#DIV/0!'));
-                            throw new PHPExcel_Calculation_ZeroDivideException('#DIV/0!');
-                            return false;
-                        } else {
-                            $result = $operand1 / $operand2;
-                        }
-                        break;
-                    //    Power
-                    case '^':
-                        $result = pow($operand1, $operand2);
-                        break;
+                $isZeroDivideValueExists = $this->checkForZeroDivideValue($operand1, $operand2);
+                if ($isZeroDivideValueExists) {
+                    $result = '#DIV/0!';
+                } else {
+                    //    If we're dealing with non-matrix operations, execute the necessary operation
+                    switch ($operation) {
+                        //    Addition
+                        case '+':
+                            $result = $operand1 + $operand2;
+                            break;
+                        //    Subtraction
+                        case '-':
+                            $result = $operand1 - $operand2;
+                            break;
+                        //    Multiplication
+                        case '*':
+                            $result = $operand1 * $operand2;
+                            break;
+                        //    Division
+                        case '/':
+                            if ($operand2 == 0) {
+                                //    Trap for Divide by Zero error
+                                $stack->push('Value', '#DIV/0!');
+                                $this->_debugLog->writeDebugLog('Evaluation Result is ', $this->showTypeDetails('#DIV/0!'));
+                                return false;
+                            } else {
+                                $result = $operand1 / $operand2;
+                            }
+                            break;
+                        //    Power
+                        case '^':
+                            $result = pow($operand1, $operand2);
+                            break;
+                    }
                 }
+
             }
         }
 
@@ -4388,5 +4409,34 @@ class PHPExcel_Calculation
         }
 
         return $returnValue;
+    }
+
+    /**
+     * @param mixed $operand1
+     * @param mixed $operand2
+     * @return bool
+     */
+    private function checkForZeroDivideValue($operand1, $operand2) {
+        return $operand1 === '#DIV/0!' || $operand2 === '#DIV/0!';
+    }
+
+    /**
+     * @param mixed $operand1
+     * @param mixed $operand2
+     * @param string $operator
+     * @return bool
+     * @throws PHPExcel_Calculation_Exception
+     */
+    private function checkIntegerAndStringComparison($operand1, $operand2, $operator) {
+        if (!in_array($operator, ['>', '>=', '<', '<='])) {
+            throw new PHPExcel_Calculation_Exception('Operator ' . $operator . 'is not supported!');
+        }
+        $moreThanOperand = $operator == '>' || $operator == '>=';
+        if (is_string($operand1) && is_numeric($operand2)) {
+            return $moreThanOperand;
+        } elseif (is_numeric($operand1) && is_string($operand2)) {
+            return !$moreThanOperand;
+        }
+        throw new PHPExcel_Calculation_Exception('There is no both integer and string operands!');
     }
 }
