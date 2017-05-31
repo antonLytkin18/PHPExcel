@@ -724,7 +724,7 @@ class PHPExcel_Calculation_LookupRef
         $rowNumber = $rowValue = false;
         foreach ($lookup_array as $rowKey => $rowData) {
             if ((is_numeric($lookup_value) && is_numeric($rowData[$firstColumn]) && ($rowData[$firstColumn] > $lookup_value)) ||
-                (!is_numeric($lookup_value) && !is_numeric($rowData[$firstColumn]) && (strtolower($rowData[$firstColumn]) > strtolower($lookup_value)))) {
+                (!is_numeric($lookup_value) && !is_numeric($rowData[$firstColumn]) && (mb_strtolower($rowData[$firstColumn]) > mb_strtolower($lookup_value)))) {
                 break;
             }
             $rowNumber = $rowKey;
@@ -732,7 +732,7 @@ class PHPExcel_Calculation_LookupRef
         }
 
         if ($rowNumber !== false) {
-            if ((!$not_exact_match) && ($rowValue != $lookup_value)) {
+            if ((!$not_exact_match) && (mb_strtolower($rowValue )!= mb_strtolower($lookup_value))) {
                 //    if an exact match is required, we have what we need to return an appropriate response
                 return PHPExcel_Calculation_Functions::NA();
             } else {
