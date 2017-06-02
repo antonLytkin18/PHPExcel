@@ -3866,15 +3866,21 @@ class PHPExcel_Calculation
                     if ($passCellReference) {
                         $args[] = $pCell;
                     }
-                    if (strpos($functionCall, '::') !== false) {
-                        $result = call_user_func_array(explode('::', $functionCall), $args);
+
+                    if ($this->findZeroDivideArgument($args, $functionCall)) {
+                        $result = PHPExcel_Calculation_Error_ZeroDivide_Abstract::$errorCode;
                     } else {
-                        foreach ($args as &$arg) {
-                            $arg = PHPExcel_Calculation_Functions::flattenSingleValue($arg);
+                        if (strpos($functionCall, '::') !== false) {
+                            $result = call_user_func_array(explode('::', $functionCall), $args);
+                        } else {
+                            foreach ($args as &$arg) {
+                                $arg = PHPExcel_Calculation_Functions::flattenSingleValue($arg);
+                            }
+                            unset($arg);
+                            $result = call_user_func_array($functionCall, $args);
                         }
-                        unset($arg);
-                        $result = call_user_func_array($functionCall, $args);
                     }
+
                     if ($functionName != 'MKMATRIX') {
                         $this->_debugLog->writeDebugLog('Evaluation Result for ', self::localeFunc($functionName), '() function call is ', $this->showTypeDetails($result));
                     }
@@ -4014,76 +4020,81 @@ class PHPExcel_Calculation
 
         $useLowercaseFirstComparison = is_string($operand1) && is_string($operand2) && PHPExcel_Calculation_Functions::getCompatibilityMode() == PHPExcel_Calculation_Functions::COMPATIBILITY_OPENOFFICE;
 
-        //    execute the necessary operation
-        switch ($operation) {
-            //    Greater than
-            case '>':
-                if ($useLowercaseFirstComparison) {
-                    $result = $this->strcmpLowercaseFirst($operand1, $operand2) > 0;
-                } else {
-                    try {
-                        $result = $this->checkIntegerAndStringComparison($operand1, $operand2, $operation);
-                    } catch (PHPExcel_Calculation_Exception $e) {
-                        $result = ($operand1 > $operand2);
+        $isZeroDivideValueExists = $this->checkForZeroDivideValue($operand1, $operand2);
+        if ($isZeroDivideValueExists) {
+            $result = PHPExcel_Calculation_Error_ZeroDivide_Abstract::$errorCode;
+        } else {
+            //    execute the necessary operation
+            switch ($operation) {
+                //    Greater than
+                case '>':
+                    if ($useLowercaseFirstComparison) {
+                        $result = $this->strcmpLowercaseFirst($operand1, $operand2) > 0;
+                    } else {
+                        try {
+                            $result = $this->checkIntegerAndStringComparison($operand1, $operand2, $operation);
+                        } catch (PHPExcel_Calculation_Exception $e) {
+                            $result = ($operand1 > $operand2);
+                        }
                     }
-                }
-                break;
-            //    Less than
-            case '<':
-                if ($useLowercaseFirstComparison) {
-                    $result = $this->strcmpLowercaseFirst($operand1, $operand2) < 0;
-                } else {
-                    try {
-                        $result = $this->checkIntegerAndStringComparison($operand1, $operand2, $operation);
-                    } catch (PHPExcel_Calculation_Exception $e) {
-                        $result = ($operand1 < $operand2);
+                    break;
+                //    Less than
+                case '<':
+                    if ($useLowercaseFirstComparison) {
+                        $result = $this->strcmpLowercaseFirst($operand1, $operand2) < 0;
+                    } else {
+                        try {
+                            $result = $this->checkIntegerAndStringComparison($operand1, $operand2, $operation);
+                        } catch (PHPExcel_Calculation_Exception $e) {
+                            $result = ($operand1 < $operand2);
+                        }
                     }
-                }
-                break;
-            //    Equality
-            case '=':
-                if (is_numeric($operand1) && is_numeric($operand2)) {
-                    $result = (abs($operand1 - $operand2) < $this->delta);
-                } else {
-                    $result = strcmp($operand1, $operand2) == 0;
-                }
-                break;
-            //    Greater than or equal
-            case '>=':
-                if (is_numeric($operand1) && is_numeric($operand2)) {
-                    $result = ((abs($operand1 - $operand2) < $this->delta) || ($operand1 > $operand2));
-                } elseif ($useLowercaseFirstComparison) {
-                    $result = $this->strcmpLowercaseFirst($operand1, $operand2) >= 0;
-                } else {
-                    try {
-                        $result = $this->checkIntegerAndStringComparison($operand1, $operand2, $operation);
-                    } catch (PHPExcel_Calculation_Exception $e) {
-                        $result = strcmp($operand1, $operand2) >= 0;
+                    break;
+                //    Equality
+                case '=':
+                    if (is_numeric($operand1) && is_numeric($operand2)) {
+                        $result = (abs($operand1 - $operand2) < $this->delta);
+                    } else {
+                        $result = strcmp($operand1, $operand2) == 0;
                     }
-                }
-                break;
-            //    Less than or equal
-            case '<=':
-                if (is_numeric($operand1) && is_numeric($operand2)) {
-                    $result = ((abs($operand1 - $operand2) < $this->delta) || ($operand1 < $operand2));
-                } elseif ($useLowercaseFirstComparison) {
-                    $result = $this->strcmpLowercaseFirst($operand1, $operand2) <= 0;
-                } else {
-                    try {
-                        $result = $this->checkIntegerAndStringComparison($operand1, $operand2, $operation);
-                    } catch (PHPExcel_Calculation_Exception $e) {
-                        $result = strcmp($operand1, $operand2) <= 0;
+                    break;
+                //    Greater than or equal
+                case '>=':
+                    if (is_numeric($operand1) && is_numeric($operand2)) {
+                        $result = ((abs($operand1 - $operand2) < $this->delta) || ($operand1 > $operand2));
+                    } elseif ($useLowercaseFirstComparison) {
+                        $result = $this->strcmpLowercaseFirst($operand1, $operand2) >= 0;
+                    } else {
+                        try {
+                            $result = $this->checkIntegerAndStringComparison($operand1, $operand2, $operation);
+                        } catch (PHPExcel_Calculation_Exception $e) {
+                            $result = strcmp($operand1, $operand2) >= 0;
+                        }
                     }
-                }
-                break;
-            //    Inequality
-            case '<>':
-                if (is_numeric($operand1) && is_numeric($operand2)) {
-                    $result = (abs($operand1 - $operand2) > 1E-14);
-                } else {
-                    $result = strcmp($operand1, $operand2) != 0;
-                }
-                break;
+                    break;
+                //    Less than or equal
+                case '<=':
+                    if (is_numeric($operand1) && is_numeric($operand2)) {
+                        $result = ((abs($operand1 - $operand2) < $this->delta) || ($operand1 < $operand2));
+                    } elseif ($useLowercaseFirstComparison) {
+                        $result = $this->strcmpLowercaseFirst($operand1, $operand2) <= 0;
+                    } else {
+                        try {
+                            $result = $this->checkIntegerAndStringComparison($operand1, $operand2, $operation);
+                        } catch (PHPExcel_Calculation_Exception $e) {
+                            $result = strcmp($operand1, $operand2) <= 0;
+                        }
+                    }
+                    break;
+                //    Inequality
+                case '<>':
+                    if (is_numeric($operand1) && is_numeric($operand2)) {
+                        $result = (abs($operand1 - $operand2) > 1E-14);
+                    } else {
+                        $result = strcmp($operand1, $operand2) != 0;
+                    }
+                    break;
+            }
         }
 
         //    Log the result details
@@ -4142,7 +4153,7 @@ class PHPExcel_Calculation
             } else {
                 $isZeroDivideValueExists = $this->checkForZeroDivideValue($operand1, $operand2);
                 if ($isZeroDivideValueExists) {
-                    $result = '#DIV/0!';
+                    $result = PHPExcel_Calculation_Error_ZeroDivide_Abstract::$errorCode;
                 } else {
                     //    If we're dealing with non-matrix operations, execute the necessary operation
                     switch ($operation) {
@@ -4417,7 +4428,7 @@ class PHPExcel_Calculation
      * @return bool
      */
     private function checkForZeroDivideValue($operand1, $operand2) {
-        return $operand1 === '#DIV/0!' || $operand2 === '#DIV/0!';
+        return $operand1 === PHPExcel_Calculation_Error_ZeroDivide_Abstract::$errorCode || $operand2 === PHPExcel_Calculation_Error_ZeroDivide_Abstract::$errorCode;
     }
 
     /**
@@ -4431,12 +4442,34 @@ class PHPExcel_Calculation
         if (!in_array($operator, ['>', '>=', '<', '<='])) {
             throw new PHPExcel_Calculation_Exception('Operator ' . $operator . 'is not supported!');
         }
-        $moreThanOperand = $operator == '>' || $operator == '>=';
+        $moreThanOperand = $operator === '>' || $operator === '>=';
         if (is_string($operand1) && is_numeric($operand2)) {
             return $moreThanOperand;
         } elseif (is_numeric($operand1) && is_string($operand2)) {
             return !$moreThanOperand;
         }
         throw new PHPExcel_Calculation_Exception('There is no both integer and string operands!');
+    }
+
+    /**
+     * @param array $args
+     * @param string $functionCall
+     * @return bool
+     */
+    private function findZeroDivideArgument($args, $functionCall) {
+        $zeroDivideHandlerMap = [
+            'PHPExcel_Calculation_Logical::IFERROR' => PHPExcel_Calculation_Error_ZeroDivide_IfError::class,
+            'PHPExcel_Calculation_Functions::IS_ERROR' => PHPExcel_Calculation_Error_ZeroDivide_IsError::class,
+            'PHPExcel_Calculation_Logical::STATEMENT_IF' => PHPExcel_Calculation_Error_ZeroDivide_StatementIf::class,
+        ];
+
+        if ($zeroDivideClass = $zeroDivideHandlerMap[$functionCall]) {
+            /** @var PHPExcel_Calculation_Error_ZeroDivide_Abstract $zeroDivideHandler */
+            $zeroDivideHandler = new $zeroDivideClass($args);
+            return $zeroDivideHandler->isError();
+        }
+
+        $zeroDivideHandler = new PHPExcel_Calculation_Error_ZeroDivide_Default($args);
+        return $zeroDivideHandler->isError();
     }
 }
