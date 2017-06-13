@@ -395,6 +395,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
             //    4-digit year
             'e'     => 'Y',
             'yyyy'  => 'Y',
+            'гггг' => 'Y',
             //    2-digit year
             'yy'    => 'y',
             //    first letter of month - no php equivalent
@@ -410,6 +411,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
             'mm:'   => 'i:',
             //    month leading zero
             'mm'    => 'm',
+            'мм' => 'm',
             //    month no leading zero
             'm'     => 'n',
             //    full day of week name
@@ -418,6 +420,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
             'ddd'   => 'D',
             //    days leading zero
             'dd'    => 'd',
+            'дд' => 'd',
             //    days no leading zero
             'd'     => 'j',
             //    seconds
@@ -642,7 +645,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
         // Let's begin inspecting the format and converting the value to a formatted string
 
         //  Check for date/time characters (not inside quotes)
-        if (preg_match('/(\[\$[A-Z]*-[0-9A-F]*\])*[hmsdy](?=(?:[^"]|"[^"]*")*$)/miu', $format, $matches)) {
+        if (preg_match('/(\[\$[A-Z]*-[0-9A-F]*\])*[hmsdyдмг](?=(?:[^"]|"[^"]*")*$)/miu', $format, $matches)) {
             // datetime format
             self::formatAsDate($value, $format);
         } elseif (preg_match('/%$/', $format)) {
