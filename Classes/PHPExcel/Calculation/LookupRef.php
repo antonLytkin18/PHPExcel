@@ -678,7 +678,7 @@ class PHPExcel_Calculation_LookupRef
         if (($aLower = mb_strtolower($a[$firstColumn])) == ($bLower = mb_strtolower($b[$firstColumn]))) {
             return 0;
         }
-        return ($aLower < $bLower) ? -1 : 1;
+        return ((int) $aLower < (int) $bLower) ? -1 : 1;
     }
 
 
@@ -732,7 +732,7 @@ class PHPExcel_Calculation_LookupRef
         }
 
         if ($rowNumber !== false) {
-            if ((!$not_exact_match) && (mb_strtolower($rowValue )!= mb_strtolower($lookup_value))) {
+            if ((!$not_exact_match) && (mb_strtolower($rowValue)!= mb_strtolower($lookup_value))) {
                 //    if an exact match is required, we have what we need to return an appropriate response
                 return PHPExcel_Calculation_Functions::NA();
             } else {
