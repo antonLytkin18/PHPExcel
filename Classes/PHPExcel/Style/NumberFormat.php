@@ -751,4 +751,22 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
 
         return $value;
     }
+
+    /**
+     * @param string $operand
+     * @return bool
+     */
+    public static function checkIsDateOperand($operand) {
+        $formatsToCheck = [
+            'd.m.Y',
+            'd/m/Y',
+            'd-m-Y'
+        ];
+        foreach ($formatsToCheck as $format) {
+            if (DateTime::createFromFormat($format, $operand)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
