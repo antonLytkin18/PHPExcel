@@ -111,7 +111,7 @@ class testDataFileIterator implements Iterator
                 }
                 unset($dataRow);
             } else {
-                switch (strtoupper($dataValue)) {
+                switch (mb_strtoupper($dataValue)) {
                     case 'NULL':
                         $dataValue = null;
                         break;

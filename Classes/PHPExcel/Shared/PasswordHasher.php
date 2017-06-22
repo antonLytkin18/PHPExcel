@@ -62,6 +62,6 @@ class PHPExcel_Shared_PasswordHasher
         $password ^= strlen($pPassword);
         $password ^= 0xCE4B;
 
-        return(strtoupper(dechex($password)));
+        return(mb_strtoupper(dechex($password)));
     }
 }

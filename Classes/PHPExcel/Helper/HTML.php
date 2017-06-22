@@ -674,7 +674,7 @@ class PHPExcel_Helper_HTML
     protected function startFontTag($tag)
     {
         foreach ($tag->attributes as $attribute) {
-            $attributeName = strtolower($attribute->name);
+            $attributeName = mb_strtolower($attribute->name);
             $attributeValue = $attribute->value;
 
             if ($attributeName == 'color') {
@@ -784,7 +784,7 @@ class PHPExcel_Helper_HTML
 
     protected function parseElementNode(DOMElement $element)
     {
-        $callbackTag = strtolower($element->nodeName);
+        $callbackTag = mb_strtolower($element->nodeName);
         $this->stack[] = $callbackTag;
 
         $this->handleCallback($element, $callbackTag, $this->startTagCallbacks);

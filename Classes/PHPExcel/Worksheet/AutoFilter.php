@@ -106,7 +106,7 @@ class PHPExcel_Worksheet_AutoFilter
     public function setRange($pRange = '')
     {
         // Uppercase coordinate
-        $cellAddress = explode('!', strtoupper($pRange));
+        $cellAddress = explode('!', mb_strtoupper($pRange));
         if (count($cellAddress) > 1) {
             list($worksheet, $pRange) = $cellAddress;
         }
@@ -275,8 +275,8 @@ class PHPExcel_Worksheet_AutoFilter
      */
     public function shiftColumn($fromColumn = null, $toColumn = null)
     {
-        $fromColumn = strtoupper($fromColumn);
-        $toColumn = strtoupper($toColumn);
+        $fromColumn = mb_strtoupper($fromColumn);
+        $toColumn = mb_strtoupper($toColumn);
 
         if (($fromColumn !== null) && (isset($this->columns[$fromColumn])) && ($toColumn !== null)) {
             $this->columns[$fromColumn]->setParent();

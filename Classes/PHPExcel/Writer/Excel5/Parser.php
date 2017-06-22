@@ -938,7 +938,7 @@ class PHPExcel_Writer_Excel5_Parser
      */
     private function cellToPackedRowcol($cell)
     {
-        $cell = strtoupper($cell);
+        $cell = mb_strtoupper($cell);
         list($row, $col, $row_rel, $col_rel) = $this->cellToRowcol($cell);
         if ($col >= 256) {
             throw new PHPExcel_Writer_Exception("Column in: $cell greater than 255");
@@ -1411,7 +1411,7 @@ class PHPExcel_Writer_Excel5_Parser
     private function func()
     {
         $num_args = 0; // number of arguments received
-        $function = strtoupper($this->currentToken);
+        $function = mb_strtoupper($this->currentToken);
         $result   = ''; // initialize result
         $this->advance();
         $this->advance();         // eat the "("

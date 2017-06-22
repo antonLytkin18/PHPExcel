@@ -75,7 +75,7 @@ class Complex
         //    Set parsed values in our properties
         $this->realPart = (float) $realPart;
         $this->imaginaryPart = (float) $imaginaryPart;
-        $this->suffix = strtolower($suffix);
+        $this->suffix = mb_strtolower($suffix);
     }
 
     public function getReal()

@@ -213,7 +213,7 @@ class PHPExcel_Style extends PHPExcel_Style_Supervisor implements PHPExcel_IComp
                 $pRange = $this->getSelectedCells();
 
                 // Uppercase coordinate
-                $pRange = strtoupper($pRange);
+                $pRange = mb_strtoupper($pRange);
 
                 // Is it a cell range or a single cell?
                 if (strpos($pRange, ':') === false) {

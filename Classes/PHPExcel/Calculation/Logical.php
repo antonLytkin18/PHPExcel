@@ -108,7 +108,7 @@ class PHPExcel_Calculation_Logical
             } elseif ((is_numeric($arg)) && (!is_string($arg))) {
                 $returnValue = $returnValue && ($arg != 0);
             } elseif (is_string($arg)) {
-                $arg = strtoupper($arg);
+                $arg = mb_strtoupper($arg);
                 if (($arg == 'TRUE') || ($arg == PHPExcel_Calculation::getTRUE())) {
                     $arg = true;
                 } elseif (($arg == 'FALSE') || ($arg == PHPExcel_Calculation::getFALSE())) {
@@ -164,7 +164,7 @@ class PHPExcel_Calculation_Logical
             } elseif ((is_numeric($arg)) && (!is_string($arg))) {
                 $returnValue = $returnValue || ($arg != 0);
             } elseif (is_string($arg)) {
-                $arg = strtoupper($arg);
+                $arg = mb_strtoupper($arg);
                 if (($arg == 'TRUE') || ($arg == PHPExcel_Calculation::getTRUE())) {
                     $arg = true;
                 } elseif (($arg == 'FALSE') || ($arg == PHPExcel_Calculation::getFALSE())) {
@@ -208,7 +208,7 @@ class PHPExcel_Calculation_Logical
     {
         $logical = PHPExcel_Calculation_Functions::flattenSingleValue($logical);
         if (is_string($logical)) {
-            $logical = strtoupper($logical);
+            $logical = mb_strtoupper($logical);
             if (($logical == 'TRUE') || ($logical == PHPExcel_Calculation::getTRUE())) {
                 return false;
             } elseif (($logical == 'FALSE') || ($logical == PHPExcel_Calculation::getFALSE())) {

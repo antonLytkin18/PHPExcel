@@ -658,7 +658,7 @@ class PHPExcel_Calculation_DateTime
     {
         $startDate = PHPExcel_Calculation_Functions::flattenSingleValue($startDate);
         $endDate   = PHPExcel_Calculation_Functions::flattenSingleValue($endDate);
-        $unit      = strtoupper(PHPExcel_Calculation_Functions::flattenSingleValue($unit));
+        $unit      = mb_strtoupper(PHPExcel_Calculation_Functions::flattenSingleValue($unit));
 
         if (is_string($startDate = self::getDateValue($startDate))) {
             return PHPExcel_Calculation_Functions::VALUE();

@@ -239,7 +239,7 @@ class PHPExcel_Reader_HTML extends PHPExcel_Reader_Abstract implements PHPExcel_
                     //    TODO
                 }
             } elseif ($child instanceof DOMElement) {
-//                echo '<b>DOM ELEMENT: </b>' , strtoupper($child->nodeName) , '<br />';
+//                echo '<b>DOM ELEMENT: </b>' , mb_strtoupper($child->nodeName) , '<br />';
 
                 $attributeArray = array();
                 foreach ($child->attributes as $attribute) {

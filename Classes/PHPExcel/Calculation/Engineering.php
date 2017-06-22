@@ -772,7 +772,7 @@ class PHPExcel_Calculation_Engineering
         }
         $power = '';
         $realNumber = strtok($workString, '+-');
-        if (strtoupper(substr($realNumber, -1)) == 'E') {
+        if (mb_strtoupper(substr($realNumber, -1)) == 'E') {
             $power = strtok('+-');
             ++$leadingSign;
         }
@@ -1218,9 +1218,9 @@ class PHPExcel_Calculation_Engineering
             return PHPExcel_Calculation_Functions::NaN();
         } elseif (strlen($x) == 10) {
             //    Two's Complement
-            return str_repeat('F', 8).substr(strtoupper(dechex(bindec(substr($x, -9)))), -2);
+            return str_repeat('F', 8).substr(mb_strtoupper(dechex(bindec(substr($x, -9)))), -2);
         }
-        $hexVal = (string) strtoupper(dechex(bindec($x)));
+        $hexVal = (string) mb_strtoupper(dechex(bindec($x)));
 
         return self::nbrConversionFormat($hexVal, $places);
     }
@@ -1273,7 +1273,7 @@ class PHPExcel_Calculation_Engineering
             return PHPExcel_Calculation_Functions::NaN();
         } elseif (strlen($x) == 10) {
             //    Two's Complement
-            return str_repeat('7', 7).substr(strtoupper(decoct(bindec(substr($x, -9)))), -3);
+            return str_repeat('7', 7).substr(mb_strtoupper(decoct(bindec(substr($x, -9)))), -3);
         }
         $octVal = (string) decoct(bindec($x));
 
@@ -1383,7 +1383,7 @@ class PHPExcel_Calculation_Engineering
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) floor($x);
-        $r = strtoupper(dechex($x));
+        $r = mb_strtoupper(dechex($x));
         if (strlen($r) == 8) {
             //    Two's Complement
             $r = 'FF'.$r;
@@ -1488,7 +1488,7 @@ class PHPExcel_Calculation_Engineering
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) $x;
-        if (strlen($x) > preg_match_all('/[0123456789ABCDEF]/', strtoupper($x), $out)) {
+        if (strlen($x) > preg_match_all('/[0123456789ABCDEF]/', mb_strtoupper($x), $out)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
         $binVal = decbin(hexdec($x));
@@ -1524,7 +1524,7 @@ class PHPExcel_Calculation_Engineering
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) $x;
-        if (strlen($x) > preg_match_all('/[0123456789ABCDEF]/', strtoupper($x), $out)) {
+        if (strlen($x) > preg_match_all('/[0123456789ABCDEF]/', mb_strtoupper($x), $out)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
         return hexdec($x);
@@ -1572,7 +1572,7 @@ class PHPExcel_Calculation_Engineering
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) $x;
-        if (strlen($x) > preg_match_all('/[0123456789ABCDEF]/', strtoupper($x), $out)) {
+        if (strlen($x) > preg_match_all('/[0123456789ABCDEF]/', mb_strtoupper($x), $out)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
         $octVal = decoct(hexdec($x));
@@ -1708,7 +1708,7 @@ class PHPExcel_Calculation_Engineering
         if (preg_match_all('/[01234567]/', $x, $out) != strlen($x)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
-        $hexVal = strtoupper(dechex(octdec($x)));
+        $hexVal = mb_strtoupper(dechex(octdec($x)));
 
         return self::nbrConversionFormat($hexVal, $places);
     }

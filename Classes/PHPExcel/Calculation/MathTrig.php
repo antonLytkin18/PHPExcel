@@ -1206,7 +1206,7 @@ class PHPExcel_Calculation_MathTrig
         foreach ($aArgs as $key => $arg) {
             if (!is_numeric($arg)) {
                 $arg = str_replace('"', '""', $arg);
-                $arg = PHPExcel_Calculation::wrapResult(strtoupper($arg));
+                $arg = PHPExcel_Calculation::wrapResult(mb_strtoupper($arg));
             }
 
             $testCondition = '='.$arg.$condition;
@@ -1264,7 +1264,7 @@ class PHPExcel_Calculation_MathTrig
                     }
                 } else {
                     if (!is_numeric($arg)) {
-                        $arg = PHPExcel_Calculation::wrapResult(strtoupper($arg));
+                        $arg = PHPExcel_Calculation::wrapResult(mb_strtoupper($arg));
                     }
                     $testCondition = '='.$arg.$condition;
                     if (!PHPExcel_Calculation::getInstance()->_calculateFormulaValue($testCondition)) {

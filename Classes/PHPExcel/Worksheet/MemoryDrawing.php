@@ -161,7 +161,7 @@ class PHPExcel_Worksheet_MemoryDrawing extends PHPExcel_Worksheet_BaseDrawing im
      */
     public function getIndexedFilename()
     {
-        $extension = strtolower($this->getMimeType());
+        $extension = mb_strtolower($this->getMimeType());
         $extension = explode('/', $extension);
         $extension = $extension[1];
 

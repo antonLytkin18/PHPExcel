@@ -619,7 +619,7 @@ class PHPExcel_Cell
             if (ctype_digit($pCoordinateString)) {
                 return $worksheet . '$' . $pCoordinateString;
             } elseif (ctype_alpha($pCoordinateString)) {
-                return $worksheet . '$' . strtoupper($pCoordinateString);
+                return $worksheet . '$' . mb_strtoupper($pCoordinateString);
             }
             return $worksheet . self::absoluteCoordinate($pCoordinateString);
         }
@@ -720,7 +720,7 @@ class PHPExcel_Cell
         }
 
         // Uppercase coordinate
-        $pRange = strtoupper($pRange);
+        $pRange = mb_strtoupper($pRange);
 
         // Extract range
         if (strpos($pRange, ':') === false) {
@@ -769,7 +769,7 @@ class PHPExcel_Cell
         }
 
         // Uppercase coordinate
-        $pRange = strtoupper($pRange);
+        $pRange = mb_strtoupper($pRange);
 
         // Extract range
         if (strpos($pRange, ':') === false) {
@@ -797,8 +797,8 @@ class PHPExcel_Cell
         if (isset($_indexCache[$pString])) {
             return $_indexCache[$pString];
         }
-        //    It's surprising how costly the strtoupper() and ord() calls actually are, so we use a lookup array rather than use ord()
-        //        and make it case insensitive to get rid of the strtoupper() as well. Because it's a static, there's no significant
+        //    It's surprising how costly the mb_strtoupper() and ord() calls actually are, so we use a lookup array rather than use ord()
+        //        and make it case insensitive to get rid of the mb_strtoupper() as well. Because it's a static, there's no significant
         //        memory overhead either
         static $_columnLookup = array(
             'A' => 1, 'B' => 2, 'C' => 3, 'D' => 4, 'E' => 5, 'F' => 6, 'G' => 7, 'H' => 8, 'I' => 9, 'J' => 10, 'K' => 11, 'L' => 12, 'M' => 13,
@@ -865,7 +865,7 @@ class PHPExcel_Cell
         $returnValue = array();
 
         // Explode spaces
-        $cellBlocks = explode(' ', str_replace('$', '', strtoupper($pRange)));
+        $cellBlocks = explode(' ', str_replace('$', '', mb_strtoupper($pRange)));
         foreach ($cellBlocks as $cellBlock) {
             // Single cell?
             if (strpos($cellBlock, ':') === false && strpos($cellBlock, ',') === false) {

@@ -332,7 +332,7 @@ class PHPExcel_Writer_Excel2007_Worksheet extends PHPExcel_Writer_Excel2007_Writ
 
         // Set Zero Height row
         if ((string)$pSheet->getDefaultRowDimension()->getZeroHeight()  == '1' ||
-            strtolower((string)$pSheet->getDefaultRowDimension()->getZeroHeight()) == 'true') {
+            mb_strtolower((string)$pSheet->getDefaultRowDimension()->getZeroHeight()) == 'true') {
             $objWriter->writeAttribute('zeroHeight', '1');
         }
 
@@ -1072,7 +1072,7 @@ class PHPExcel_Writer_Excel2007_Worksheet extends PHPExcel_Writer_Excel2007_Writ
                 $mappedType = $pCell->getDataType();
 
                 // Write data type depending on its type
-                switch (strtolower($mappedType)) {
+                switch (mb_strtolower($mappedType)) {
                     case 'inlinestr':    // Inline string
                     case 's':            // String
                     case 'b':            // Boolean
@@ -1091,7 +1091,7 @@ class PHPExcel_Writer_Excel2007_Worksheet extends PHPExcel_Writer_Excel2007_Writ
                 }
 
                 // Write data depending on its type
-                switch (strtolower($mappedType)) {
+                switch (mb_strtolower($mappedType)) {
                     case 'inlinestr':    // Inline string
                         if (! $cellValue instanceof PHPExcel_RichText) {
                             $objWriter->writeElement('t', PHPExcel_Shared_String::ControlCharacterPHP2OOXML(htmlspecialchars($cellValue)));

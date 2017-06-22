@@ -103,7 +103,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 
         //    Retrieve charset encoding
         if (preg_match('/<?xml.*encoding=[\'"](.*?)[\'"].*?>/um', $data, $matches)) {
-            $this->charSet = strtoupper($matches[1]);
+            $this->charSet = mb_strtoupper($matches[1]);
         }
 //        echo 'Character Set is ', $this->charSet,'<br />';
 
@@ -232,9 +232,9 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 
     protected static function identifyFixedStyleValue($styleList, &$styleAttributeValue)
     {
-        $styleAttributeValue = strtolower($styleAttributeValue);
+        $styleAttributeValue = mb_strtolower($styleAttributeValue);
         foreach ($styleList as $style) {
-            if ($styleAttributeValue == strtolower($style)) {
+            if ($styleAttributeValue == mb_strtolower($style)) {
                 $styleAttributeValue = $style;
                 return true;
             }
@@ -442,7 +442,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 //                                                $thisBorder['style'] = $borderStyleValue;
                                         break;
                                     case 'Position':
-                                        $borderPosition = strtolower($borderStyleValue);
+                                        $borderPosition = mb_strtolower($borderStyleValue);
                                         break;
                                     case 'Color':
                                         $borderColour = substr($borderStyleValue, 1);

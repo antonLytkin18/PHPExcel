@@ -506,7 +506,7 @@ class PHPExcel_Calculation_LookupRef
         $lookup_value = PHPExcel_Calculation_Functions::flattenSingleValue($lookup_value);
         $match_type    = (is_null($match_type)) ? 1 : (int) PHPExcel_Calculation_Functions::flattenSingleValue($match_type);
         //    MATCH is not case sensitive
-        $lookup_value = strtolower($lookup_value);
+        $lookup_value = mb_strtolower($lookup_value);
 
         //    lookup_value type has to be number, text, or logical values
         if ((!is_numeric($lookup_value)) && (!is_string($lookup_value)) && (!is_bool($lookup_value))) {
@@ -533,7 +533,7 @@ class PHPExcel_Calculation_LookupRef
             }
             //    convert strings to lowercase for case-insensitive testing
             if (is_string($lookupArrayValue)) {
-                $lookup_array[$i] = strtolower($lookupArrayValue);
+                $lookup_array[$i] = mb_strtolower($lookupArrayValue);
             }
             if ((is_null($lookupArrayValue)) && (($match_type == 1) || ($match_type == -1))) {
                 $lookup_array = array_slice($lookup_array, 0, $i-1);
@@ -675,7 +675,7 @@ class PHPExcel_Calculation_LookupRef
     {
         reset($a);
         $firstColumn = key($a);
-        if (($aLower = strtolower($a[$firstColumn])) == ($bLower = strtolower($b[$firstColumn]))) {
+        if (($aLower = mb_strtolower($a[$firstColumn])) == ($bLower = mb_strtolower($b[$firstColumn]))) {
             return 0;
         }
         return ($aLower < $bLower) ? -1 : 1;
@@ -788,7 +788,7 @@ class PHPExcel_Calculation_LookupRef
         $rowNumber = $rowValue = false;
         foreach ($lookup_array[$firstColumn] as $rowKey => $rowData) {
             if ((is_numeric($lookup_value) && is_numeric($rowData) && ($rowData > $lookup_value)) ||
-                (!is_numeric($lookup_value) && !is_numeric($rowData) && (strtolower($rowData) > strtolower($lookup_value)))) {
+                (!is_numeric($lookup_value) && !is_numeric($rowData) && (mb_strtolower($rowData) > mb_strtolower($lookup_value)))) {
                 break;
             }
             $rowNumber = $rowKey;

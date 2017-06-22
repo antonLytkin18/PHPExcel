@@ -3471,7 +3471,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 
         if (!$this->readDataOnly) {
             // offset: 0; size: 2; 16-bit hash value of password
-            $password = strtoupper(dechex(self::getInt2d($recordData, 0))); // the hashed password
+            $password = mb_strtoupper(dechex(self::getInt2d($recordData, 0))); // the hashed password
             $this->phpSheet->getProtection()->setPassword($password, true);
         }
     }
@@ -5105,7 +5105,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 
             // Apply range protection to sheet
             if ($cellRanges) {
-                $this->phpSheet->protectCells(implode(' ', $cellRanges), strtoupper(dechex($wPassword)), true);
+                $this->phpSheet->protectCells(implode(' ', $cellRanges), mb_strtoupper(dechex($wPassword)), true);
             }
         }
     }

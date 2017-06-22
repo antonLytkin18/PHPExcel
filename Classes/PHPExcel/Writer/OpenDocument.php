@@ -73,8 +73,8 @@ class PHPExcel_Writer_OpenDocument extends PHPExcel_Writer_Abstract implements P
      */
     public function getWriterPart($pPartName = '')
     {
-        if ($pPartName != '' && isset($this->writerParts[strtolower($pPartName)])) {
-            return $this->writerParts[strtolower($pPartName)];
+        if ($pPartName != '' && isset($this->writerParts[mb_strtolower($pPartName)])) {
+            return $this->writerParts[mb_strtolower($pPartName)];
         } else {
             return null;
         }
@@ -97,7 +97,7 @@ class PHPExcel_Writer_OpenDocument extends PHPExcel_Writer_Abstract implements P
 
         // If $pFilename is php://output or php://stdout, make it a temporary file...
         $originalFilename = $pFilename;
-        if (strtolower($pFilename) == 'php://output' || strtolower($pFilename) == 'php://stdout') {
+        if (mb_strtolower($pFilename) == 'php://output' || mb_strtolower($pFilename) == 'php://stdout') {
             $pFilename = @tempnam(PHPExcel_Shared_File::sys_get_temp_dir(), 'phpxltmp');
             if ($pFilename == '') {
                 $pFilename = $originalFilename;

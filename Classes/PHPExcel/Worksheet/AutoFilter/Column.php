@@ -146,7 +146,7 @@ class PHPExcel_Worksheet_AutoFilter_Column
     public function setColumnIndex($pColumn)
     {
         // Uppercase coordinate
-        $pColumn = strtoupper($pColumn);
+        $pColumn = mb_strtoupper($pColumn);
         if ($this->parent !== null) {
             $this->parent->testColumnInRange($pColumn);
         }
@@ -227,7 +227,7 @@ class PHPExcel_Worksheet_AutoFilter_Column
     public function setJoin($pJoin = self::AUTOFILTER_COLUMN_JOIN_OR)
     {
         // Lowercase And/Or
-        $pJoin = strtolower($pJoin);
+        $pJoin = mb_strtolower($pJoin);
         if (!in_array($pJoin, self::$ruleJoins)) {
             throw new PHPExcel_Exception('Invalid rule connection for column AutoFilter.');
         }

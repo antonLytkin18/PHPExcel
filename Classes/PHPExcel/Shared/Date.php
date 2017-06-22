@@ -288,7 +288,7 @@ class PHPExcel_Shared_Date
      */
     public static function isDateTimeFormatCode($pFormatCode = '')
     {
-        if (strtolower($pFormatCode) === strtolower(PHPExcel_Style_NumberFormat::FORMAT_GENERAL)) {
+        if (mb_strtolower($pFormatCode) === mb_strtolower(PHPExcel_Style_NumberFormat::FORMAT_GENERAL)) {
             //    "General" contains an epoch letter 'e', so we trap for it explicitly here (case-insensitive check)
             return false;
         }

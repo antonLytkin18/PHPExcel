@@ -2308,7 +2308,7 @@ class PHPExcel_Calculation
     public function setLocale($locale = 'en_us')
     {
         //    Identify our locale and language
-        $language = $locale = strtolower($locale);
+        $language = $locale = mb_strtolower($locale);
         if (strpos($locale, '_') !== false) {
             list($language) = explode('_', $locale);
         }
@@ -2364,7 +2364,7 @@ class PHPExcel_Calculation
                         list($localeSetting) = explode('##', $localeSetting);    //    Strip out comments
                         if (strpos($localeSetting, '=') !== false) {
                             list($settingName, $settingValue) = explode('=', $localeSetting);
-                            $settingName = strtoupper(trim($settingName));
+                            $settingName = mb_strtoupper(trim($settingName));
                             switch ($settingName) {
                                 case 'ARGUMENTSEPARATOR':
                                     self::$localeArgumentSeparator = trim($settingValue);
@@ -3325,14 +3325,14 @@ class PHPExcel_Calculation
                 if (preg_match('/^'.self::CALCULATION_REGEXP_FUNCTION.'$/i', $val, $matches)) {
                     $val = preg_replace('/\s/u', '', $val);
 //                    echo 'Element '.$val.' is a Function<br />';
-                    if (isset(self::$PHPExcelFunctions[strtoupper($matches[1])]) || isset(self::$controlFunctions[strtoupper($matches[1])])) {    // it's a function
-                        $stack->push('Function', strtoupper($val));
+                    if (isset(self::$PHPExcelFunctions[mb_strtoupper($matches[1])]) || isset(self::$controlFunctions[mb_strtoupper($matches[1])])) {    // it's a function
+                        $stack->push('Function', mb_strtoupper($val));
                         $ax = preg_match('/^\s*(\s*\))/ui', substr($formula, $index+$length), $amatch);
                         if ($ax) {
-                            $stack->push('Operand Count for Function '.strtoupper($val).')', 0);
+                            $stack->push('Operand Count for Function '.mb_strtoupper($val).')', 0);
                             $expectingOperator = true;
                         } else {
-                            $stack->push('Operand Count for Function '.strtoupper($val).')', 1);
+                            $stack->push('Operand Count for Function '.mb_strtoupper($val).')', 1);
                             $expectingOperator = false;
                         }
                         $stack->push('Brace', '(');
@@ -3393,7 +3393,7 @@ class PHPExcel_Calculation
                             (strlen($startRowColRef) <= 3) && (strlen($val) <= 3)) {
                             //    Column range
                             $endRowColRef = ($pCellParent !== null) ? $pCellParent->getHighestRow() : 1048576;        //    Max 1,048,576 rows for Excel2007
-                            $output[count($output)-1]['value'] = $rangeWS1.strtoupper($startRowColRef).'1';
+                            $output[count($output)-1]['value'] = $rangeWS1.mb_strtoupper($startRowColRef).'1';
                             $val = $rangeWS2.$val.$endRowColRef;
                         }
                     }
@@ -3412,11 +3412,11 @@ class PHPExcel_Calculation
 //                            echo 'Casting '.$val.' to integer<br />';
                             $val = (integer) $val;
                         }
-                    } elseif (isset(self::$excelConstants[trim(strtoupper($val))])) {
-                        $excelConstant = trim(strtoupper($val));
+                    } elseif (isset(self::$excelConstants[trim(mb_strtoupper($val))])) {
+                        $excelConstant = trim(mb_strtoupper($val));
 //                        echo 'Element '.$excelConstant.' is an Excel Constant<br />';
                         $val = self::$excelConstants[$excelConstant];
-                    } elseif (($localeConstant = array_search(trim(strtoupper($val)), self::$localeBoolean)) !== false) {
+                    } elseif (($localeConstant = array_search(trim(mb_strtoupper($val)), self::$localeBoolean)) !== false) {
 //                        echo 'Element '.$localeConstant.' is an Excel Constant<br />';
                         $val = self::$excelConstants[$localeConstant];
                     }
@@ -3889,8 +3889,8 @@ class PHPExcel_Calculation
 
             } else {
                 // if the token is a number, boolean, string or an Excel error, push it onto the stack
-                if (isset(self::$excelConstants[strtoupper($token)])) {
-                    $excelConstant = strtoupper($token);
+                if (isset(self::$excelConstants[mb_strtoupper($token)])) {
+                    $excelConstant = mb_strtoupper($token);
 //                    echo 'Token is a PHPExcel constant: '.$excelConstant.'<br />';
                     $stack->push('Constant Value', self::$excelConstants[$excelConstant]);
                     $this->_debugLog->writeDebugLog('Evaluating Constant ', $excelConstant, ' as ', $this->showTypeDetails(self::$excelConstants[$excelConstant]));
@@ -4011,10 +4011,10 @@ class PHPExcel_Calculation
         // Use case insensitive comparaison if not OpenOffice mode
         if (PHPExcel_Calculation_Functions::getCompatibilityMode() != PHPExcel_Calculation_Functions::COMPATIBILITY_OPENOFFICE) {
             if (is_string($operand1)) {
-                $operand1 = strtoupper($operand1);
+                $operand1 = mb_strtoupper($operand1);
             }
             if (is_string($operand2)) {
-                $operand2 = strtoupper($operand2);
+                $operand2 = mb_strtoupper($operand2);
             }
         }
 
@@ -4363,7 +4363,7 @@ class PHPExcel_Calculation
      */
     public function isImplemented($pFunction = '')
     {
-        $pFunction = strtoupper($pFunction);
+        $pFunction = mb_strtoupper($pFunction);
         if (isset(self::$PHPExcelFunctions[$pFunction])) {
             return (self::$PHPExcelFunctions[$pFunction]['functionCall'] != 'PHPExcel_Calculation_Functions::DUMMY');
         } else {

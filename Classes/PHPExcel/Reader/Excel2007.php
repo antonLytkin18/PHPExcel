@@ -266,7 +266,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
         $calculatedValue    = self::$castBaseType($c);
 
         // Shared formula?
-        if (isset($c->f['t']) && strtolower((string)$c->f['t']) == 'shared') {
+        if (isset($c->f['t']) && mb_strtolower((string)$c->f['t']) == 'shared') {
 //            echo 'SHARED FORMULA', PHP_EOL;
             $instance = (string)$c->f['si'];
 
@@ -960,7 +960,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                     }
 
                                     // Extract all cell references in $ref
-                                    $cellBlocks = explode(' ', str_replace('$', '', strtoupper($ref)));
+                                    $cellBlocks = explode(' ', str_replace('$', '', mb_strtoupper($ref)));
                                     foreach ($cellBlocks as $cellBlock) {
                                         $docSheet->getStyle($cellBlock)->setConditionalStyles($conditionalStyles);
                                     }
@@ -1181,7 +1181,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                             if ($xmlSheet && $xmlSheet->dataValidations && !$this->readDataOnly) {
                                 foreach ($xmlSheet->dataValidations->dataValidation as $dataValidation) {
                                     // Uppercase coordinate
-                                    $range = strtoupper($dataValidation["sqref"]);
+                                    $range = mb_strtoupper($dataValidation["sqref"]);
                                     $rangeSet = explode(' ', $range);
                                     foreach ($rangeSet as $range) {
                                         $stRange = $docSheet->shrinkRangeToFit($range);
@@ -1301,7 +1301,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
 
                                         if (isset($shape['style'])) {
                                             $style        = (string)$shape['style'];
-                                            $fillColor    = strtoupper(substr((string)$shape['fillcolor'], 1));
+                                            $fillColor    = mb_strtoupper(substr((string)$shape['fillcolor'], 1));
                                             $column       = null;
                                             $row          = null;
 
@@ -1792,7 +1792,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
             }
 
             if (isset($style->font->vertAlign) && isset($style->font->vertAlign["val"])) {
-                $vertAlign = strtolower((string)$style->font->vertAlign["val"]);
+                $vertAlign = mb_strtolower((string)$style->font->vertAlign["val"]);
                 if ($vertAlign == 'superscript') {
                     $docStyle->getFont()->setSuperScript(true);
                 }
@@ -1934,7 +1934,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                             $objText->getFont()->setItalic(true);
                         }
                         if (isset($run->rPr->vertAlign) && isset($run->rPr->vertAlign["val"])) {
-                            $vertAlign = strtolower((string)$run->rPr->vertAlign["val"]);
+                            $vertAlign = mb_strtolower((string)$run->rPr->vertAlign["val"]);
                             if ($vertAlign == 'superscript') {
                                 $objText->getFont()->setSuperScript(true);
                             }

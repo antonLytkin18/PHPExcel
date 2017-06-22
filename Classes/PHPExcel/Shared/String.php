@@ -89,7 +89,7 @@ class PHPExcel_Shared_String
     {
         for ($i = 0; $i <= 31; ++$i) {
             if ($i != 9 && $i != 10 && $i != 13) {
-                $find = '_x' . sprintf('%04s', strtoupper(dechex($i))) . '_';
+                $find = '_x' . sprintf('%04s', mb_strtoupper(dechex($i))) . '_';
                 $replace = chr($i);
                 self::$controlCharacters[$find] = $replace;
             }
@@ -600,7 +600,7 @@ class PHPExcel_Shared_String
         if (function_exists('mb_convert_case')) {
             return mb_convert_case($pValue, MB_CASE_UPPER, "UTF-8");
         }
-        return strtoupper($pValue);
+        return mb_strtoupper($pValue);
     }
 
     /**
@@ -614,7 +614,7 @@ class PHPExcel_Shared_String
         if (function_exists('mb_convert_case')) {
             return mb_convert_case($pValue, MB_CASE_LOWER, "UTF-8");
         }
-        return strtolower($pValue);
+        return mb_strtolower($pValue);
     }
 
     /**
@@ -664,7 +664,7 @@ class PHPExcel_Shared_String
             }
             return implode('', $characters);
         }
-        return strtolower($pValue) ^ strtoupper($pValue) ^ $pValue;
+        return mb_strtolower($pValue) ^ mb_strtoupper($pValue) ^ $pValue;
     }
 
     /**

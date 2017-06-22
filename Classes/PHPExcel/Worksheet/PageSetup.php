@@ -678,7 +678,7 @@ class PHPExcel_Worksheet_PageSetup
         } elseif (strpos($value, '$') !== false) {
             throw new PHPExcel_Exception('Cell coordinate must not be absolute.');
         }
-        $value = strtoupper($value);
+        $value = mb_strtoupper($value);
 
         if ($method == self::SETPRINTRANGE_OVERWRITE) {
             if ($index == 0) {

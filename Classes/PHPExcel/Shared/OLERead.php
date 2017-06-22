@@ -268,7 +268,7 @@ class PHPExcel_Shared_OLERead
             );
 
             // tmp helper to simplify checks
-            $upName = strtoupper($name);
+            $upName = mb_strtoupper($name);
 
             // Workbook directory entry (BIFF5 uses Book, BIFF8 uses Workbook)
             if (($upName === 'WORKBOOK') || ($upName === 'BOOK')) {

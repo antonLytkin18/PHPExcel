@@ -1482,7 +1482,7 @@ class PHPExcel_Writer_HTML extends PHPExcel_Writer_Abstract implements PHPExcel_
         if (preg_match($color_regex, $pFormat, $matches)) {
             $color = str_replace('[', '', $matches[0]);
             $color = str_replace(']', '', $color);
-            $color = strtolower($color);
+            $color = mb_strtolower($color);
         }
 
         // convert to PCDATA

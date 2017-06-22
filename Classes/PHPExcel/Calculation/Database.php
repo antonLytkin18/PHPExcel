@@ -56,8 +56,8 @@ class PHPExcel_Calculation_Database
      */
     private static function fieldExtract($database, $field)
     {
-        $field = strtoupper(PHPExcel_Calculation_Functions::flattenSingleValue($field));
-        $fieldNames = array_map('strtoupper', array_shift($database));
+        $field = mb_strtoupper(PHPExcel_Calculation_Functions::flattenSingleValue($field));
+        $fieldNames = array_map('mb_strtoupper', array_shift($database));
 
         if (is_numeric($field)) {
             $keys = array_keys($fieldNames);
@@ -126,7 +126,7 @@ class PHPExcel_Calculation_Database
                 $k = array_search($criteriaName, $fieldNames);
                 if (isset($dataValues[$k])) {
                     $dataValue = $dataValues[$k];
-                    $dataValue = (is_string($dataValue)) ? PHPExcel_Calculation::wrapResult(strtoupper($dataValue)) : $dataValue;
+                    $dataValue = (is_string($dataValue)) ? PHPExcel_Calculation::wrapResult(mb_strtoupper($dataValue)) : $dataValue;
                     $testConditionList = str_replace('[:' . $criteriaName . ']', $dataValue, $testConditionList);
                 }
             }
