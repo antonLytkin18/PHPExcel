@@ -2102,7 +2102,7 @@ class PHPExcel_Calculation
         if ($workbook !== null) {
             $instance = $workbook->getCalculationEngine();
             if (isset($instance)) {
-                return $instance;  
+                return $instance;
             }
         }
 
@@ -3685,9 +3685,14 @@ class PHPExcel_Calculation
                 if (is_array($arg)) {
                     self::checkMatrixOperands($arg, $multiplier, 2);
                     try {
-                        $matrix1 = new PHPExcel_Shared_JAMA_Matrix($arg);
-                        $matrixResult = $matrix1->arrayTimesEquals($multiplier);
-                        $result = $matrixResult->getArray();
+                        $dateString = PHPExcel_Calculation_Functions::flattenSingleValue($arg);
+                        if (PHPExcel_Style_NumberFormat::checkIsDateOperand($dateString)) {
+                            $result = (new DateTime())->setTimestamp(-((new DateTime($dateString))->getTimestamp()))->format('d.m.Y');
+                        } else {
+                            $matrix1 = new PHPExcel_Shared_JAMA_Matrix($arg);
+                            $matrixResult = $matrix1->arrayTimesEquals($multiplier);
+                            $result = $matrixResult->getArray();
+                        }
                     } catch (PHPExcel_Exception $ex) {
                         $this->_debugLog->writeDebugLog('JAMA Matrix Exception: ', $ex->getMessage());
                         $result = '#VALUE!';
@@ -3942,6 +3947,11 @@ class PHPExcel_Calculation
             if ($operand > '' && $operand{0} == '"') {
                 $operand = self::unwrapResult($operand);
             }
+
+            if (PHPExcel_Style_NumberFormat::checkIsDateOperand($operand)) {
+                return true;
+            }
+
             //    If the string is a numeric value, we treat it as a numeric, so no further testing
             if (!is_numeric($operand)) {
                 //    If not a numeric, test to see if the value is an Excel error, and so can't be used in normal binary operations
@@ -4146,9 +4156,11 @@ class PHPExcel_Calculation
                 $result = '#VALUE!';
             }
         } else {
+            $isDateOperands = $this->checkIsDateOperands($operand1, $operand2);
             if ((PHPExcel_Calculation_Functions::getCompatibilityMode() != PHPExcel_Calculation_Functions::COMPATIBILITY_OPENOFFICE) &&
                 ((is_string($operand1) && !is_numeric($operand1) && strlen($operand1)>0) ||
-                 (is_string($operand2) && !is_numeric($operand2) && strlen($operand2)>0))) {
+                    (is_string($operand2) && !is_numeric($operand2) && strlen($operand2)>0)) &&
+                !$isDateOperands && !in_array($operation, ['-', '+'])) {
                 $result = PHPExcel_Calculation_Functions::VALUE();
             } else {
                 $isZeroDivideValueExists = $this->checkForZeroDivideValue($operand1, $operand2);
@@ -4159,11 +4171,24 @@ class PHPExcel_Calculation
                     switch ($operation) {
                         //    Addition
                         case '+':
-                            $result = $operand1 + $operand2;
+                            if ($isDateOperands) {
+                                $operand1Timestamp = (new DateTime($operand1))->getTimestamp();
+                                $operand2Timestamp = (new DateTime($operand2))->getTimestamp();
+                                $result = ((new DateTime())->setTimestamp($operand1Timestamp + $operand2Timestamp))
+                                        ->diff((new DateTime())->setTimestamp(0))
+                                        ->days + 1;
+                            } else {
+                                $result = $operand1 + $operand2;
+                            }
                             break;
                         //    Subtraction
                         case '-':
-                            $result = $operand1 - $operand2;
+                            if ($isDateOperands) {
+                                $date1 = new DateTime($operand1);
+                                $result = $date1->diff(new DateTime($operand2))->days;
+                            } else {
+                                $result = $operand1 - $operand2;
+                            }
                             break;
                         //    Multiplication
                         case '*':
@@ -4471,5 +4496,14 @@ class PHPExcel_Calculation
 
         $zeroDivideHandler = new PHPExcel_Calculation_Error_ZeroDivide_Default($args);
         return $zeroDivideHandler->isError();
+    }
+
+    /**
+     * @param mixed $operand1
+     * @param mixed $operand2
+     * @return bool
+     */
+    private function checkIsDateOperands($operand1, $operand2) {
+        return PHPExcel_Style_NumberFormat::checkIsDateOperand($operand1) && PHPExcel_Style_NumberFormat::checkIsDateOperand($operand2);
     }
 }
