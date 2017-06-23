@@ -678,7 +678,13 @@ class PHPExcel_Calculation_LookupRef
         if (($aLower = mb_strtolower($a[$firstColumn])) == ($bLower = mb_strtolower($b[$firstColumn]))) {
             return 0;
         }
-        return ((int) $aLower < (int) $bLower) ? -1 : 1;
+        if (is_numeric($aLower)) {
+            return ((float) $aLower < (float) $bLower) ? -1 : 1;
+        }
+        if (!is_numeric($aLower)) {
+            return ((string) $aLower < (string) $bLower) ? -1 : 1;
+        }
+        return 0;
     }
 
 
