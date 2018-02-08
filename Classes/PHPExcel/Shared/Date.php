@@ -167,6 +167,11 @@ class PHPExcel_Shared_Date
         return $dateObj;
     }
 
+    public static function toString() {
+        $dateTime = new DateTime();
+        return $dateTime->format('d.m.Y');
+    }
+
 
     /**
      *    Convert a date from PHP to Excel

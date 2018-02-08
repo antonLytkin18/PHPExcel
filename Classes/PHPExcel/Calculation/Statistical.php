@@ -1294,7 +1294,7 @@ class PHPExcel_Calculation_Statistical
         $returnValue = 0;
 
         $aArgs = PHPExcel_Calculation_Functions::flattenArray($aArgs);
-        $condition = PHPExcel_Calculation_Functions::ifCondition($condition);
+        $condition = PHPExcel_Calculation_Functions::ifCondition((string) $condition);
         // Loop through arguments
         foreach ($aArgs as $arg) {
             if (!is_numeric($arg)) {

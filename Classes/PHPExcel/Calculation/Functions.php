@@ -59,6 +59,7 @@ class PHPExcel_Calculation_Functions
     const RETURNDATE_PHP_NUMERIC = 'P';
     const RETURNDATE_PHP_OBJECT  = 'O';
     const RETURNDATE_EXCEL       = 'E';
+    const RETURNDATE_STRING       = 'S';
 
 
     /**
@@ -75,7 +76,7 @@ class PHPExcel_Calculation_Functions
      * @access    private
      * @var string
      */
-    protected static $returnDateType = self::RETURNDATE_EXCEL;
+    protected static $returnDateType = self::RETURNDATE_STRING;
 
     /**
      * List of error codes

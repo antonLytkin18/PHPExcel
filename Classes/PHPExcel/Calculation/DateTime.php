@@ -230,6 +230,9 @@ class PHPExcel_Calculation_DateTime
             case PHPExcel_Calculation_Functions::RETURNDATE_PHP_OBJECT:
                 $retValue = PHPExcel_Shared_Date::ExcelToPHPObject($excelDateTime);
                 break;
+            case PHPExcel_Calculation_Functions::RETURNDATE_STRING:
+                $retValue = PHPExcel_Shared_Date::toString();
+                break;
         }
         date_default_timezone_set($saveTimeZone);
 
