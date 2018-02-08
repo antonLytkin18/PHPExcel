@@ -13,7 +13,7 @@ if (!defined('CALCULATION_REGEXP_CELLREF')) {
     //    Test for support of \P (multibyte options) in PCRE
     if (defined('PREG_BAD_UTF8_ERROR')) {
         //    Cell reference (cell or range of cells, with or without a sheet reference)
-        define('CALCULATION_REGEXP_CELLREF', '((([^\s,!&%^\/\*\+<>=-]*)|(\'[^\']*\')|(\"[^\"]*\"))!)?\$?([a-z]{1,3})\$?(\d{1,7})');
+        define('CALCULATION_REGEXP_CELLREF', '((([^\s,!&%^\/\*\+<>=-]*)|(\'[^\']*\')|(\"[^\"]*\"))!)?\$?([a-z]{1,3})\$?(\d{1,7})*');
         //    Named Range of cells
         define('CALCULATION_REGEXP_NAMEDRANGE', '((([^\s,!&%^\/\*\+<>=-]*)|(\'[^\']*\')|(\"[^\"]*\"))!)?([_A-Z][_A-Z0-9\.]*)');
     } else {
@@ -550,7 +550,7 @@ class PHPExcel_Calculation
         'COUNTIFS' => array(
             'category' => PHPExcel_Calculation_Function::CATEGORY_STATISTICAL,
             'functionCall' => 'PHPExcel_Calculation_Functions::DUMMY',
-            'argumentCount' => '2'
+            'argumentCount' => '2,4'
         ),
         'COUPDAYBS' => array(
             'category' => PHPExcel_Calculation_Function::CATEGORY_FINANCIAL,
@@ -3517,6 +3517,7 @@ class PHPExcel_Calculation
         $pCellParent = ($pCell !== null) ? $pCell->getParent() : null;
         $stack = new PHPExcel_Calculation_Token_Stack;
 
+        $tokens = $this->processTokenRanges($tokens, $pCellWorksheet);
         //    Loop through each token in turn
         foreach ($tokens as $tokenData) {
 //            print_r($tokenData);
@@ -4505,5 +4506,25 @@ class PHPExcel_Calculation
      */
     private function checkIsDateOperands($operand1, $operand2) {
         return PHPExcel_Style_NumberFormat::checkIsDateOperand($operand1) && PHPExcel_Style_NumberFormat::checkIsDateOperand($operand2);
+    }
+
+    private function processTokenRanges($tokens, PHPExcel_Worksheet $worksheet = null) {
+        $minRaw = 1;
+        $highestRow = $worksheet ? $worksheet->getHighestRow() : 1000;
+        foreach ($tokens as $key => $tokenData) {
+            if (!$tokens[$key + 1] || !$tokens[$key + 2]) {
+                continue;
+            }
+            if ($tokens[$key + 1]['value'] !== $tokenData['value']) {
+                continue;
+            }
+            if ($tokens[$key + 2]['value'] !== ':') {
+                continue;
+            }
+            $tokens[$key]['value'] .= (string) $minRaw;
+            $tokens[$key + 1]['value'] .= (string) $highestRow;
+        }
+
+        return $tokens;
     }
 }
