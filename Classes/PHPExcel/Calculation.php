@@ -13,7 +13,7 @@ if (!defined('CALCULATION_REGEXP_CELLREF')) {
     //    Test for support of \P (multibyte options) in PCRE
     if (defined('PREG_BAD_UTF8_ERROR')) {
         //    Cell reference (cell or range of cells, with or without a sheet reference)
-        define('CALCULATION_REGEXP_CELLREF', '((([^\s,!&%^\/\*\+<>=-]*)|(\'[^\']*\')|(\"[^\"]*\"))!)?\$?([a-z]{1,3})\$?(\d{1,7})*');
+        define('CALCULATION_REGEXP_CELLREF', '((([^\s,!&%^\/\*\+<>=-]*)|(\'[^\']*\')|(\"[^\"]*\"))!)?\$?([a-z]{1,5})\$?(\d{1,7})*');
         //    Named Range of cells
         define('CALCULATION_REGEXP_NAMEDRANGE', '((([^\s,!&%^\/\*\+<>=-]*)|(\'[^\']*\')|(\"[^\"]*\"))!)?([_A-Z][_A-Z0-9\.]*)');
     } else {
@@ -4521,8 +4521,8 @@ class PHPExcel_Calculation
             if ($tokens[$key + 2]['value'] !== ':') {
                 continue;
             }
-            $tokens[$key]['value'] .= (string) $minRaw;
-            $tokens[$key + 1]['value'] .= (string) $highestRow;
+            !is_numeric(substr($tokens[$key]['value'], -1)) && $tokens[$key]['value'] .= (string) $minRaw;
+            !is_numeric(substr($tokens[$key + 1]['value'], -1)) && $tokens[$key + 1]['value'] .= (string) $highestRow;
         }
 
         return $tokens;
